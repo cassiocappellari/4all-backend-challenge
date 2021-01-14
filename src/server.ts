@@ -2,11 +2,13 @@ import express from 'express'
 
 import './database/connection'
 
-import routes from './routes/userRoutes'
+import userRoutes from './routes/userRoutes'
+import movieRoutes from './routes/movieRoutes'
 
 const app = express()
 
 app.use(express.json())
-app.use(routes)
+app.use(userRoutes)
+app.use(movieRoutes)
 
 app.listen(3000)
