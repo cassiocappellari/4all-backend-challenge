@@ -1,7 +1,7 @@
 import {Request, Response} from 'express'
 import {getRepository} from 'typeorm'
 import User from '../models/User'
-
+import bcrypt from 'bcryptjs'
 
 export default {
     async create(req: Request, res: Response) {
@@ -11,12 +11,13 @@ export default {
             password
         } = req.body
 
+        const hash = await bcrypt.hash(password, 10)
         const userRepository = getRepository(User)
 
         const data = {
             name,
             email,
-            password
+            password: hash
         }
 
         try {
