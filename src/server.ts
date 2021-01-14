@@ -1,9 +1,12 @@
 import express from 'express'
 
+import './database/connection'
+
+import routes from './routes/userRoutes'
+
 const app = express()
 
-app.get('/', (req, res) => {
-    res.send('Hello Word!')
-})
+app.use(express.json())
+app.use(routes)
 
 app.listen(3000)
