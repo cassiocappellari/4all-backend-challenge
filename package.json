@@ -12,6 +12,7 @@
   "dependencies": {
     "@types/express": "^4.17.11",
     "@types/mysql": "^2.15.17",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "mysql": "^2.18.1",
     "typeorm": "^0.2.30"

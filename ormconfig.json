@@ -1,7 +1,0 @@
-{
-    "type": "mysql",
-    "database": "./src/config/database.ts",
-    "entities": [
-        "./src/models/*.ts"
-    ]
-}
