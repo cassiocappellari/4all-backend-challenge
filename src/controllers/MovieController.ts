@@ -21,36 +21,39 @@ export default {
             const createNewMovie = movieRepository.create(movieData)
             await movieRepository.save(createNewMovie)
 
-            return res.status(201).send()
+            return res.status(201).send({message: 'movie successfully created'})
         } catch(error) {
-            res.status(400).send({message: 'error creating movie'})
+            return res.status(400).send({message: 'error creating movie'})
         }
     },
     async getAvailableMovies(req: Request, res: Response) {
         try {
             const movieRepository = getRepository(Movie)        
             const getMovies = await movieRepository
-            .createQueryBuilder()
+            .createQueryBuilder('movie')
+            .where('movie.quantity != 0')
             .getMany()
 
             return res.status(200).send(getMovies)
         } catch(error) {
-            res.status(400).send({message: 'error getting movie'})
+            return res.status(400).send({message: 'error getting movie'})
         }
     },
     async filterByMovieTitle(req: Request, res: Response) {
         try {
-            const movieTitle = req.params.title
+            const movieTitle = req.query.title
 
             const movieRepository = getRepository(Movie)
             const findMovieByTitle = await movieRepository
             .createQueryBuilder('movie')
-            .where('movie.title = title', {title: movieTitle})
-            .getOne()
+            .where('movie.title = :title', {title: movieTitle})
+            .getMany()
+
+            if(findMovieByTitle.length === 0) return res.send({message: 'movie not found'})
 
             return res.status(200).send(findMovieByTitle)
         } catch(error) {
-            res.status(400).send({message: 'movie not found'})
+            return res.status(400).send({message: 'error filtering movies'})
         }
     },
     async rentMovie(req: Request, res: Response) {
@@ -68,7 +71,7 @@ export default {
             let movieAvailability = getMovieId.quantity
             
             if(movieAvailability === 0) {
-                res.status(400).send({message: 'film not available'})
+                return res.status(400).send({message: 'movie not available'})
             }
 
             --movieAvailability
@@ -80,10 +83,9 @@ export default {
             .where('id = :id', {id: movieId})
             .execute()
 
-            res.status(200).send({message: "movie rented successfuly"})
+            return res.status(200).send({message: "movie rented successfuly"})
         } catch(error) {
-            console.log(error)
-            res.status(400).send({message: 'error renting movie'})
+            return res.status(400).send({message: 'error renting movie'})
         }
     },
     async returnMovie(req: Request, res: Response) {
@@ -108,10 +110,9 @@ export default {
             .where('id = :id', {id: movieId})
             .execute()
 
-            res.status(200).send({message: "movie returned successfuly"})
+            return res.status(200).send({message: "movie returned successfuly"})
         } catch(error) {
-            console.log(error)
-            res.status(400).send({message: 'error returning movie'})
+            return res.status(400).send({message: 'error returning movie'})
         }
     }
 }

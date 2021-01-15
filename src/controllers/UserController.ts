@@ -5,29 +5,33 @@ import bcrypt from 'bcryptjs'
 
 export default {
     async signup(req: Request, res: Response) {
-        const {
-            name,
-            email,
-            password
-        } = req.body
-
-        const hash = await bcrypt.hash(password, 10)
-        const userRepository = getRepository(User)
-
-        const userData = {
-            name,
-            email,
-            password: hash
-        }
-
         try {
+            const {
+                name,
+                email,
+                password
+            } = req.body
+
+            const userRepository = getRepository(User)
+
+            const checkDuplicatedUser = await userRepository.findOne({email})
+            if(checkDuplicatedUser) return res.status(400).send({error: 'user already exists'})
+    
+            const hash = await bcrypt.hash(password, 10)
+    
+            const userData = {
+                name,
+                email,
+                password: hash
+            }
+
             const signupUser = userRepository.create(userData)
             await userRepository.save(signupUser)
-        } catch(error) {
-            res.status(400).send({message: 'error creating user'})
-        }
 
-        return res.status(201).send()
+            return res.status(201).send()
+        } catch(error) {
+            return res.status(400).send({message: 'error creating user'})
+        }
     },
     async logon(req: Request, res: Response) {
         return res.send()
