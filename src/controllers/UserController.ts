@@ -3,7 +3,6 @@ import {getRepository} from 'typeorm'
 import User from '../models/User'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import authToken from '../config/auth'
 
 export default {
     async signup(req: Request, res: Response) {
@@ -28,7 +27,7 @@ export default {
             const signupUser = userRepository.create(userData)
             await userRepository.save(signupUser)
 
-            return res.status(201).send()
+            return res.status(201).send(signupUser)
         } catch(error) {
             return res.status(400).send({message: 'error creating user'})
         }
@@ -48,18 +47,22 @@ export default {
             const isValidPassword = await bcrypt.compare(password, user.password)
             if(!isValidPassword) return res.status(401).send({error: 'invalid password'})
 
-            const token = jwt.sign({id: user.id}, authToken, {expiresIn: '1d'})
+            const token = jwt.sign({id: user.id}, process.env.JWT_KEY as string, {expiresIn: '1d'})
 
-            res.json({
-                user,
-                token
-            })
-
+            res.status(200).send({message: 'user successfuly logged in', token})
         } catch(error) {
             return res.status(400).send({message: 'error authenticating user'})
         }
     },
     async logoff(req: Request, res: Response) {
-        return res.send()
+        try {
+            let userToken = req.headers.authorization as any
+            
+            userToken = null
+
+            res.status(200).send(userToken)
+        } catch(error) {
+            return res.status(400).send({message: 'error authenticating user'})
+        }
     }
 }
