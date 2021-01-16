@@ -15,6 +15,8 @@ export default function authMiddleware(req: Request, res: Response, next: NextFu
     const token = authHeader.replace('Bearer', '').trim()
 
     try {
+        // process.env.jwtsessions(foreach ) // busca o token
+        // se existir segue o baile
         const data = jwt.verify(token, process.env.JWT_KEY as string) // no método jwt.verify() passamos o token informado pelo usuário no header da requisição e o secret da aplicação
 
         const {id} = data as TokenPayload

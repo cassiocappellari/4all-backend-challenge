@@ -3,6 +3,7 @@ import {getRepository} from 'typeorm'
 import User from '../models/User'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+// import userAuthenticator from '../services/UserAuthenticator'
 
 export default {
     async signup(req: Request, res: Response) {
@@ -44,25 +45,32 @@ export default {
             const user = await userRepository.findOne({email})
             if(!user) return res.status(401).send({error: 'user not found'})
 
+            // userAuthenticator.passwordAuthenticate(email, password)
+
             const isValidPassword = await bcrypt.compare(password, user.password)
             if(!isValidPassword) return res.status(401).send({error: 'invalid password'})
 
             const token = jwt.sign({id: user.id}, process.env.JWT_KEY as string, {expiresIn: '1d'})
 
+            // process.env.jtwsessions.push(token)
+
             res.status(200).send({message: 'user successfuly logged in', token})
         } catch(error) {
-            return res.status(400).send({message: 'error authenticating user'})
+            return res.status(401).send({message: 'error authenticating user'})
         }
     },
     async logoff(req: Request, res: Response) {
         try {
             let userToken = req.headers.authorization as any
-            
+
+            // verifica dentro do array qual índice do token do usuário
+            // array filter retorna todos os tokens menos o array do usuário
+
             userToken = null
 
             res.status(200).send(userToken)
         } catch(error) {
-            return res.status(400).send({message: 'error authenticating user'})
+            return res.status(401).send({message: 'error authenticating user'})
         }
     }
 }
