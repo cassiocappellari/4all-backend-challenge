@@ -1,116 +1,51 @@
 import {Request, Response} from 'express'
-import {getRepository, getConnection} from 'typeorm'
-import Movie from '../models/Movie'
+import movieDatabase from '../database/movieDatabase'
 
 export default {
     async createMovie(req: Request, res: Response) {
         try {
-            const {
-                title,
-                director,
-                quantity
-            } = req.body
-    
-            const movieRepository = getRepository(Movie)
-    
-            const movieData = {
-                title,
-                director,
-                quantity
-            }
-            const createNewMovie = movieRepository.create(movieData)
-            await movieRepository.save(createNewMovie)
+            const createMovieStatus = await movieDatabase.createMovie(req.body)
 
-            return res.status(201).send({message: 'movie successfully created'})
+            return res.status(201).send({createMovieStatus})
         } catch(error) {
             return res.status(400).send({message: 'error creating movie'})
         }
     },
     async getAvailableMovies(req: Request, res: Response) {
         try {
-            const movieRepository = getRepository(Movie)        
-            const getMovies = await movieRepository
-            .createQueryBuilder('movie')
-            .where('movie.quantity != 0')
-            .getMany()
+            const getMoviesStatus = await movieDatabase.getAvailableMovies()
 
-            return res.status(200).send(getMovies)
+            return res.status(200).send(getMoviesStatus)
         } catch(error) {
             return res.status(400).send({message: 'error getting movie'})
         }
     },
     async filterByMovieTitle(req: Request, res: Response) {
         try {
-            const movieTitle = req.query.title
+            const findMovieByTitleStatus = await movieDatabase.filterByMovieTitle(req.query.title as any)
+            if(findMovieByTitleStatus === 'movie not found') return res.status(404).send({findMovieByTitleStatus})
 
-            const movieRepository = getRepository(Movie)
-            const findMovieByTitle = await movieRepository
-            .createQueryBuilder('movie')
-            .where('movie.title = :title', {title: movieTitle})
-            .getMany()
-
-            if(findMovieByTitle.length === 0) return res.status(404).send({error: 'movie not found'})
-
-            return res.status(200).send(findMovieByTitle)
+            return res.status(200).send(findMovieByTitleStatus)
         } catch(error) {
-            return res.status(400).send({message: 'error filtering movies'})
+            return res.status(400).send({message: 'error filtering movie'})
         }
     },
     async rentMovie(req: Request, res: Response) {
         try {
-            const movieId = req.params.id
+            const rentMovieStatus = await movieDatabase.rentMovie(req.params.id as any)
 
-            const movieRepository = getRepository(Movie)
-            
-            const getMovieId = await movieRepository
-            .createQueryBuilder('movie')
-            .select('quantity')
-            .where('movie.id = :id', {id: movieId})
-            .getRawOne()
+            if(rentMovieStatus === 'movie not available') return res.status(400).send({rentMovieStatus})
 
-            let movieAvailability = getMovieId.quantity
-            
-            if(movieAvailability === 0) {
-                return res.status(400).send({message: 'movie not available'})
-            }
-
-            --movieAvailability
-
-            await getConnection()
-            .createQueryBuilder()
-            .update(Movie)
-            .set({quantity: movieAvailability})
-            .where('id = :id', {id: movieId})
-            .execute()
-
-            return res.status(200).send({message: "movie rented successfuly"})
+            return res.status(200).send({rentMovieStatus})
         } catch(error) {
             return res.status(400).send({message: 'error renting movie'})
         }
     },
     async returnMovie(req: Request, res: Response) {
         try {
-            const movieId = req.params.id
+            const returnMovieStatus = await movieDatabase.returnMovie(req.params.id as any)
 
-            const movieRepository = getRepository(Movie)
-            
-            const getMovieId = await movieRepository
-            .createQueryBuilder('movie')
-            .select('quantity')
-            .where('movie.id = :id', {id: movieId})
-            .getRawOne()
-
-            let movieAvailability = getMovieId.quantity
-            ++movieAvailability
-
-            await getConnection()
-            .createQueryBuilder()
-            .update(Movie)
-            .set({quantity: movieAvailability})
-            .where('id = :id', {id: movieId})
-            .execute()
-
-            return res.status(200).send({message: "movie returned successfuly"})
+            return res.status(200).send({returnMovieStatus})
         } catch(error) {
             return res.status(400).send({message: 'error returning movie'})
         }

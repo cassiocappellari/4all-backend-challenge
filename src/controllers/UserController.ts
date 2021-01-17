@@ -1,47 +1,31 @@
 import {Request, Response} from 'express'
-import {getRepository} from 'typeorm'
-import User from '../models/User'
 import Authenticator from '../services/Authenticator'
+import userDatabase from '../database/userDatabase'
 
 export default {
     async signup(req: Request, res: Response) {
         try {
-            const {
-                name,
-                email,
-                password
-            } = req.body
-
-            const userRepository = getRepository(User)
-
-            const checkDuplicatedUser = await userRepository.findOne({email})
-            if(checkDuplicatedUser) return res.status(409).send({error: 'user already exists'})
+            const userSignUpStatus = await userDatabase.UserSignUp(req.body)
     
-            const userData = {
-                name,
-                email,
-                password
-            }
+            if(userSignUpStatus === 'user already exists') return res.status(409).send({userSignUpStatus})
 
-            const signupUser = userRepository.create(userData)
-            await userRepository.save(signupUser)
+            const token = await Authenticator.tokenGenerate(req.body)
 
-            return res.status(201).send({message: 'user successfully created'})
+            return res.status(201).send({userSignUpStatus, token})
         } catch(error) {
-            console.log(error)
             return res.status(400).send({message: 'error creating user'})
         }
     },
     async logon(req: Request, res: Response) {
         try {
-            const checkUserAuthentication = await Authenticator.userAuthenticate(req.body)
+            const userAuthenticationStatus = await Authenticator.userAuthenticate(req.body)
 
-            if(checkUserAuthentication === 'user not found') return res.status(404).send({checkUserAuthentication})
-            if(checkUserAuthentication === 'invalid password') return res.status(401).send({checkUserAuthentication})
+            if(userAuthenticationStatus === 'user not found') return res.status(404).send({userAuthenticationStatus})
+            if(userAuthenticationStatus === 'invalid password') return res.status(401).send({userAuthenticationStatus})
 
             const token = await Authenticator.tokenGenerate(req.body)
 
-            res.status(200).send({checkUserAuthentication, token})
+            res.status(200).send({userAuthenticationStatus, token})
         } catch(error) {
             return res.status(401).send({message: 'error authenticating user'})
         }
@@ -49,9 +33,12 @@ export default {
     async logoff(req: Request, res: Response) {
         try {
             const authHeader = req.headers.authorization as string
-            await Authenticator.tokenDestroy(authHeader)
+            const userTokenStatus = await Authenticator.tokenDestroy(authHeader)
 
-            res.status(200).send({message: 'User successfuly logged out'})
+            if(userTokenStatus === 'token not provided') return res.status(404).send({userTokenStatus})
+            if(userTokenStatus === 'invalid token') return res.status(401).send({userTokenStatus})
+
+            res.status(200).send({userTokenStatus})
         } catch(error) {
             return res.status(401).send({message: 'error logging out user'})
         }

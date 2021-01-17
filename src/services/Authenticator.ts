@@ -22,19 +22,19 @@ interface TokenPayloadDTO {
 
 export default {
     async authRoutesMiddleware(req: Request, res: Response, next: NextFunction) {
-        const authHeader = req.headers.authorization
-        if(!authHeader) return res.send(401).send({message: 'Token not provided'})
-    
-        const token = authHeader.replace('Bearer', '').trim()
-    
         try {
+            const authHeader = req.headers.authorization as string
+            const token = authHeader.replace('Bearer', '').trim()
+
+            if(!token) return res.status(401).send({message: 'token not provided'})
+        
             const data = await jwtr.verify(token, String(process.env.JWT_KEY))
             const {id} = data as TokenPayloadDTO
             req.userId = id
-    
+
             return next()
         } catch(error) {
-            return res.status(401).send({message: 'Invalid token'})
+            return res.status(401).send({message: 'invalid token'})
         }
     },
     async userAuthenticate({email, password}: UserAuthenticationDTO) {
@@ -67,9 +67,14 @@ export default {
     },
     async tokenDestroy(userToken: string) {
         const token = userToken.replace('Bearer', '').trim()
-        const data = await jwtr.verify(token, String(process.env.JWT_KEY))
-        const tokenId = data.jti as string
+        if(!token) return 'token not provided'
 
+        const data = await jwtr.verify(token, String(process.env.JWT_KEY))
+        if(!data) return 'invalid token'
+
+        const tokenId = data.jti as string
         await jwtr.destroy(tokenId)
+
+        return 'user successfuly logged out'
     }
 }
