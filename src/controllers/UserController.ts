@@ -1,11 +1,7 @@
 import {Request, Response} from 'express'
 import {getRepository} from 'typeorm'
 import User from '../models/User'
-import bcrypt from 'bcryptjs'
-import redis from 'redis'
-import JWTR from 'jwt-redis'
-const redisClient = redis.createClient()
-const jwtr = new JWTR(redisClient)
+import Authenticator from '../services/Authenticator'
 
 export default {
     async signup(req: Request, res: Response) {
@@ -38,25 +34,14 @@ export default {
     },
     async logon(req: Request, res: Response) {
         try {
-            const {
-                email,
-                password
-            } = req.body
+            const checkUserAuthentication = await Authenticator.userAuthenticate(req.body)
 
-            const userRepository = getRepository(User)
+            if(checkUserAuthentication === 'user not found') return res.status(404).send({checkUserAuthentication})
+            if(checkUserAuthentication === 'invalid password') return res.status(401).send({checkUserAuthentication})
 
-            const user = await userRepository.findOne({email})
-            if(!user) return res.status(404).send({error: 'user not found'})
+            const token = await Authenticator.tokenGenerate(req.body)
 
-            const isValidPassword = await bcrypt.compare(password, user.password)
-            if(!isValidPassword) return res.status(401).send({error: 'invalid password'})
-
-            const token = await jwtr.sign(
-                {id: user.id, jti: user.id as unknown as string}, 
-                String(process.env.JWT_KEY), 
-                {expiresIn: String(process.env.JWT_EXPIRES_IN)})
-
-            res.status(200).send({message: 'user successfuly logged in', token})
+            res.status(200).send({checkUserAuthentication, token})
         } catch(error) {
             return res.status(401).send({message: 'error authenticating user'})
         }
@@ -64,11 +49,7 @@ export default {
     async logoff(req: Request, res: Response) {
         try {
             const authHeader = req.headers.authorization as string
-            const token = authHeader.replace('Bearer', '').trim()
-            const data = await jwtr.verify(token, String(process.env.JWT_KEY))
-            const tokenId = data.jti as string
-
-            await jwtr.destroy(tokenId)
+            await Authenticator.tokenDestroy(authHeader)
 
             res.status(200).send({message: 'User successfuly logged out'})
         } catch(error) {
