@@ -90,7 +90,7 @@ Após clonar o projeto, rodar os comandos e instalar as dependências junto com 
 
 ## 🗺️ Routes
 
-🔓 **Públicas**
+## 🔓 Públicas
 
 - Nas rotas abaixo não há necessidade de token para acessá-las.
 
@@ -111,7 +111,6 @@ Entrada:
 	"password": "123456"
 }
 ```
-
 Saída:
 ```json
 {
@@ -128,7 +127,6 @@ Entrada:
 	"password": "123456"
 }
 ```
-
 Saída:
 ```json
 {
@@ -137,23 +135,24 @@ Saída:
 }
 ```
 
-🔐 **Privadas**
+## 🔐 Privadas
 
-- As rotas abaixo somente podem ser acessadas mediante `JWT token` validado
-- O token de acesso tem duração de 60 minutos
+- As rotas abaixo somente podem ser acessadas mediante `JWT token` validado;
+- O token de acesso tem duração de 60 minutos.
 
 |rota|Método HTTP|parâmetros|descrição
 |:---|:---:|:---:|:---:
 |`/user/logoff`|GET|Request header authorization com `Bearer` + `JWT token`|Invalida o token de acesso do usuário
 |`/movie/create`|POST|Request body com `title`, `director` and `quantity`|Cadastra um novo filme no banco de dados
-|`/movie/available`|GET|-|Lista todos os filmes no banco de dados disponíveis para aluguel
+|`/movie/available`|GET|-|Lista todos os filmes do banco de dados disponíveis para aluguel
 |`/movie/filter`|GET|Query parameter com `title` + nome do filme|Retorna o filme de acordo com o título desejado
-|`/movie/rent/:id`|PUT|Query parameter com `id` do filme desejado|Aluga o filme caso ele esteja disponível
+|`/movie/rent/:id`|PUT|Query parameter com `id` do filme desejado|Aluga o filme caso disponível
 |`/movie/return/:id`|PUT|Query parameter com `id` do filme devolvido|Devolve o filme alugado
 
 **Exemplos de requisições**
 
 - **GET:** `/user/logoff`
+
 Entrada:
 ```
 {
@@ -168,6 +167,7 @@ Saída:
 ```
 
 - **POST:** `/movie/create`
+
 Entrada:
 ```json
 {
@@ -187,7 +187,6 @@ Saída:
 
 A rota de listar filmes disponíveis não apresenta aqueles cuja quantidade é igual a 0.
 
-```
 Saída:
 ```json
 [
@@ -231,6 +230,7 @@ Saída:
 ```
 
 - **GET:** `/movie/filter`
+
 Entrada:
 ```
 http://localhost:3000/movie/filter?title=Jurassic%20Park
@@ -249,7 +249,7 @@ Saída:
 
 - **PUT:** `/movie/rent/:id`
 
-A rota de alugar filme subtrai 1 da quantidade do filme.
+A rota de alugar filmes subtrai 1 da quantidade do filme.
 
 Entrada:
 ```
@@ -264,7 +264,7 @@ Saída:
 
 - **PUT:** `/movie/return/:id`
 
-A rota de devolver filme soma 1 da quantidade do filme.
+A rota de devolver filmes soma 1 da quantidade do filme.
 
 Entrada:
 ```
