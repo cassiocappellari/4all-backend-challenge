@@ -86,7 +86,7 @@ CREATE TABLE movies (
 
 Após clonar o projeto, rodar os comandos e instalar as dependências junto com os bancos de dados, é possível testar o sistema localmente através do aplicativo [Insomnia](https://insomnia.rest/). Basta clicar no botão abaixo:
 
-Botão do Insomnia aqui!
+[![Run in Insomnia}](https://insomnia.rest/images/run.svg)](https://insomnia.rest/run/?label=4all-backend-challenge&uri=https%3A%2F%2Fraw.githubusercontent.com%2Fcassiocappellari%2F4all-backend-challenge%2Fmaster%2FInsomnia_2021-01-17)
 
 ## 🗺️ Routes
 
