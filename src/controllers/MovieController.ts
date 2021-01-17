@@ -49,7 +49,7 @@ export default {
             .where('movie.title = :title', {title: movieTitle})
             .getMany()
 
-            if(findMovieByTitle.length === 0) return res.send({message: 'movie not found'})
+            if(findMovieByTitle.length === 0) return res.status(404).send({error: 'movie not found'})
 
             return res.status(200).send(findMovieByTitle)
         } catch(error) {

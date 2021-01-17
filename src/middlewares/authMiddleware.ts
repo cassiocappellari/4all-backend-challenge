@@ -1,30 +1,29 @@
 import {Request, Response, NextFunction} from 'express'
-import jwt from 'jsonwebtoken'
+import redis from 'redis'
+import JWTR from 'jwt-redis'
+const redisClient = redis.createClient()
+const jwtr = new JWTR(redisClient)
 
 interface TokenPayload {
     id: string
     iat: number
     exp: number
+    jti: string
 }
 
-export default function authMiddleware(req: Request, res: Response, next: NextFunction) {
+export default async function authMiddleware(req: Request, res: Response, next: NextFunction) {
     const authHeader = req.headers.authorization
-
     if(!authHeader) return res.send(401).send({message: 'Token not provided'})
 
     const token = authHeader.replace('Bearer', '').trim()
 
     try {
-        // process.env.jwtsessions(foreach ) // busca o token
-        // se existir segue o baile
-        const data = jwt.verify(token, process.env.JWT_KEY as string) // no método jwt.verify() passamos o token informado pelo usuário no header da requisição e o secret da aplicação
-
+        const data = await jwtr.verify(token, String(process.env.JWT_KEY))
         const {id} = data as TokenPayload
-
         req.userId = id
 
         return next()
-    } catch(err) {
+    } catch(error) {
         return res.status(401).send({message: 'Invalid token'})
     }
 }

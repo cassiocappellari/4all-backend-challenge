@@ -2,8 +2,10 @@ import {Request, Response} from 'express'
 import {getRepository} from 'typeorm'
 import User from '../models/User'
 import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
-// import userAuthenticator from '../services/UserAuthenticator'
+import redis from 'redis'
+import JWTR from 'jwt-redis'
+const redisClient = redis.createClient()
+const jwtr = new JWTR(redisClient)
 
 export default {
     async signup(req: Request, res: Response) {
@@ -28,8 +30,9 @@ export default {
             const signupUser = userRepository.create(userData)
             await userRepository.save(signupUser)
 
-            return res.status(201).send(signupUser)
+            return res.status(201).send({message: 'user successfully created'})
         } catch(error) {
+            console.log(error)
             return res.status(400).send({message: 'error creating user'})
         }
     },
@@ -43,16 +46,15 @@ export default {
             const userRepository = getRepository(User)
 
             const user = await userRepository.findOne({email})
-            if(!user) return res.status(401).send({error: 'user not found'})
-
-            // userAuthenticator.passwordAuthenticate(email, password)
+            if(!user) return res.status(404).send({error: 'user not found'})
 
             const isValidPassword = await bcrypt.compare(password, user.password)
             if(!isValidPassword) return res.status(401).send({error: 'invalid password'})
 
-            const token = jwt.sign({id: user.id}, process.env.JWT_KEY as string, {expiresIn: '1d'})
-
-            // process.env.jtwsessions.push(token)
+            const token = await jwtr.sign(
+                {id: user.id, jti: user.id as unknown as string}, 
+                String(process.env.JWT_KEY), 
+                {expiresIn: String(process.env.JWT_EXPIRES_IN)})
 
             res.status(200).send({message: 'user successfuly logged in', token})
         } catch(error) {
@@ -61,16 +63,16 @@ export default {
     },
     async logoff(req: Request, res: Response) {
         try {
-            let userToken = req.headers.authorization as any
+            const authHeader = req.headers.authorization as string
+            const token = authHeader.replace('Bearer', '').trim()
+            const data = await jwtr.verify(token, String(process.env.JWT_KEY))
+            const tokenId = data.jti as string
 
-            // verifica dentro do array qual índice do token do usuário
-            // array filter retorna todos os tokens menos o array do usuário
+            await jwtr.destroy(tokenId)
 
-            userToken = null
-
-            res.status(200).send(userToken)
+            res.status(200).send({message: 'User successfuly logged out'})
         } catch(error) {
-            return res.status(401).send({message: 'error authenticating user'})
+            return res.status(401).send({message: 'error logging out user'})
         }
     }
 }

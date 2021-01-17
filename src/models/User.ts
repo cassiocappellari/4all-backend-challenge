@@ -17,6 +17,6 @@ export default class User {
 
     @BeforeInsert()
     hashPassword() {
-        this.password = bcrypt.hashSync(this.password, 8)
+        this.password = bcrypt.hashSync(this.password, Number(process.env.BCRYPT_SALTROUNDS))
     }
 }
