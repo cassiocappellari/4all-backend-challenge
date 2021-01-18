@@ -97,12 +97,12 @@ Após clonar o projeto, rodar os comandos e instalar as dependências junto com 
 ## 🔓 Públicas
 
 - Nas rotas abaixo não há necessidade de token para acessá-las;
-- As duas rotas fornecem token de acesso à todas privadas como retorno da requisição.
+- As duas rotas fornecem, como retorno da requisição, um token de acesso à todas rotas privadas.
 
 |rota|método HTTP|parâmetros|descrição
 |:---|:---:|:---:|:---:
 |`/user/signup`|POST|Request body com `name`, `email` e `password`|Cadastra o usuário no banco de dados com `password` encriptado e retorna token de acesso à rotas privadas
-|`/user/logon`|POST|Request body com `email` e `password`|Loga o usuário no sistema e retorna token de acesso à rotas privadas
+|`/user/logon`|POST|Request body com `email` e `password`|Loga o usuário no sistema mediante validação de `password` e retorna token de acesso à rotas privadas
 
 **Exemplos de requisições**
 
@@ -151,9 +151,9 @@ Saída:
 |`/user/logoff`|GET|Request header authorization com `Bearer` + `JWT token`|Invalida o token de acesso do usuário
 |`/movie/create`|POST|Request body com `title`, `director` e `quantity`|Cadastra um novo filme no banco de dados
 |`/movie/available`|GET|-|Lista todos os filmes do banco de dados disponíveis para aluguel
-|`/movie/filter`|GET|Query parameter com `title` + nome do filme|Retorna o filme de acordo com o título desejado
-|`/movie/rent/:id`|PUT|Query parameter com `id` do filme desejado|Aluga o filme caso disponível
-|`/movie/return/:id`|PUT|Query parameter com `id` do filme devolvido|Devolve o filme alugado
+|`/movie/filter`|GET|Query parameter com `title` + nome do filme|Retorna o filme de acordo com o título informado
+|`/movie/rent/:id`|PUT|Query parameter com `id` do filme que será alugado|Aluga o filme caso disponível
+|`/movie/return/:id`|PUT|Query parameter com `id` do filme que será devolvido|Devolve o filme alugado
 
 **Exemplos de requisições**
 
@@ -255,8 +255,7 @@ Saída:
 
 - **PUT:** `/movie/rent/:id`
 
-A rota de alugar filmes subtrai 1 da quantidade do filme desejado;
-Caso a quantidade seja 0, o sistema retorna mensagem informando que o filme não está disponível.
+A rota de alugar filmes verifica a quantidade de cópias do filme desejado e subtrai 1 do valor do campo `quantity` caso esteja disponível para aluguel.
 
 Entrada:
 ```
@@ -271,7 +270,7 @@ Saída:
 
 - **PUT:** `/movie/return/:id`
 
-A rota de devolver filmes soma 1 à quantidade do filme.
+A rota de devolver filmes soma 1 ao valor do campo `quantity` do filme que será devolvido.
 
 Entrada:
 ```
