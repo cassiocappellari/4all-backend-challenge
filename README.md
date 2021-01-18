@@ -14,7 +14,7 @@
 ## 🚀 Features
 
 - Criação de usuários
-- Logon e Logoff de usuários
+- Logon e logoff de usuários
 - Cadastro de filmes
 - Listagem de filmes disponíveis
 - Pesquisa de filmes pelo título
@@ -42,9 +42,11 @@ $ npm start
 
 ```
 
-## 🗄️ Database
+## 🗄️ Databases
 
 - **Redis**
+
+Responsável por armazenar os tokens gerados para usuários cadastrados.
 
 ```bash
 # Atualize seu cache de pacotes do Linux
@@ -62,7 +64,9 @@ $ sudo apt install redis-server
 
 - **MySQL**
 
-Tabela de usuários
+Responsável por armezanar os dados da aplicação referentes às informações de usuários e filmes.
+
+Scripts da tabela de usuários
 
 ```
 CREATE TABLE users (
@@ -73,7 +77,7 @@ CREATE TABLE users (
 );
 ```
 
-Tabela de filmes
+Scripts da tabela de filmes
 
 ```
 CREATE TABLE movies (
@@ -88,16 +92,17 @@ Após clonar o projeto, rodar os comandos e instalar as dependências junto com 
 
 [![Run in Insomnia}](https://insomnia.rest/images/run.svg)](https://insomnia.rest/run/?label=4all-backend-challenge&uri=https%3A%2F%2Fraw.githubusercontent.com%2Fcassiocappellari%2F4all-backend-challenge%2Fmaster%2FInsomnia_2021-01-17)
 
-## 🗺️ Routes
+## 🗺️ App Routes
 
 ## 🔓 Públicas
 
-- Nas rotas abaixo não há necessidade de token para acessá-las.
+- Nas rotas abaixo não há necessidade de token para acessá-las;
+- As duas rotas fornecem token de acesso à todas privadas como retorno da requisição.
 
-|rota|Método HTTP|parâmetros|descrição
+|rota|método HTTP|parâmetros|descrição
 |:---|:---:|:---:|:---:
-|`/user/signup`|POST|Request body com `name`, `email` and `password`|Cadastra o usuário no banco de dados com `password` encriptado e retorna token de acesso à rotas privadas
-|`/user/logon`|POST|Request body com `email` and `password`|Loga o usuário no sistema e retorna token de acesso à rotas privadas
+|`/user/signup`|POST|Request body com `name`, `email` e `password`|Cadastra o usuário no banco de dados com `password` encriptado e retorna token de acesso à rotas privadas
+|`/user/logon`|POST|Request body com `email` e `password`|Loga o usuário no sistema e retorna token de acesso à rotas privadas
 
 **Exemplos de requisições**
 
@@ -137,13 +142,14 @@ Saída:
 
 ## 🔐 Privadas
 
-- As rotas abaixo somente podem ser acessadas mediante `JWT token` validado;
-- O token de acesso tem duração de 60 minutos.
+- As rotas abaixo somente podem ser acessadas mediante `JWT token` gerado nas rotas `/user/signup` ou `/user/logon`;
+- O token deve ser inserido no request header authorization da requisição desejada;
+- O token de acesso tem duração de 60 minutos a partir do momento em que é gerado.
 
-|rota|Método HTTP|parâmetros|descrição
+|rota|método HTTP|parâmetros|descrição
 |:---|:---:|:---:|:---:
 |`/user/logoff`|GET|Request header authorization com `Bearer` + `JWT token`|Invalida o token de acesso do usuário
-|`/movie/create`|POST|Request body com `title`, `director` and `quantity`|Cadastra um novo filme no banco de dados
+|`/movie/create`|POST|Request body com `title`, `director` e `quantity`|Cadastra um novo filme no banco de dados
 |`/movie/available`|GET|-|Lista todos os filmes do banco de dados disponíveis para aluguel
 |`/movie/filter`|GET|Query parameter com `title` + nome do filme|Retorna o filme de acordo com o título desejado
 |`/movie/rent/:id`|PUT|Query parameter com `id` do filme desejado|Aluga o filme caso disponível
@@ -249,7 +255,8 @@ Saída:
 
 - **PUT:** `/movie/rent/:id`
 
-A rota de alugar filmes subtrai 1 da quantidade do filme.
+A rota de alugar filmes subtrai 1 da quantidade do filme desejado;
+Caso a quantidade seja 0, o sistema retorna mensagem informando que o filme não está disponível.
 
 Entrada:
 ```
@@ -264,7 +271,7 @@ Saída:
 
 - **PUT:** `/movie/return/:id`
 
-A rota de devolver filmes soma 1 da quantidade do filme.
+A rota de devolver filmes soma 1 à quantidade do filme.
 
 Entrada:
 ```
