@@ -7,13 +7,15 @@ export default {
         try {
             const userSignUpStatus = await userDatabase.UserSignUp(req.body)
     
-            if(userSignUpStatus === 'user already exists') return res.status(409).send({userSignUpStatus})
+            if(userSignUpStatus === 'user already exists') return res.status(400).send({userSignUpStatus})
+            if(userSignUpStatus === 'all fields are required') return res.status(400).send({userSignUpStatus})
+            if(userSignUpStatus === 'password must have at least six characters') return res.status(400).send({userSignUpStatus})
 
             const token = await Authenticator.tokenGenerate(req.body)
 
             return res.status(201).send({userSignUpStatus, token})
         } catch(error) {
-            return res.status(400).send({message: 'error creating user'})
+            return res.status(400).send({message: 'error creating user, contact your system administrator'})
         }
     },
     async logon(req: Request, res: Response) {
@@ -27,7 +29,7 @@ export default {
 
             res.status(200).send({userAuthenticationStatus, token})
         } catch(error) {
-            return res.status(401).send({message: 'error authenticating user'})
+            return res.status(401).send({message: 'error authenticating user, contact your system administrator'})
         }
     },
     async logoff(req: Request, res: Response) {
@@ -36,11 +38,11 @@ export default {
             const userTokenStatus = await Authenticator.tokenDestroy(authHeader)
 
             if(userTokenStatus === 'token not provided') return res.status(404).send({userTokenStatus})
-            if(userTokenStatus === 'invalid token') return res.status(401).send({userTokenStatus})
+            if(userTokenStatus === 'invalid token') return res.status(403).send({userTokenStatus})
 
             res.status(200).send({userTokenStatus})
         } catch(error) {
-            return res.status(401).send({message: 'error logging out user'})
+            return res.status(401).send({message: 'error logging out user, contact your system administrator'})
         }
     }
 }

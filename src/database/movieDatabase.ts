@@ -11,12 +11,18 @@ interface MovieInputDTO {
 export default {
     async createMovie({title, director, quantity}: MovieInputDTO) {
         const movieRepository = getRepository(Movie)
+        const movie = await movieRepository.findOne({title})
+
+        if(movie) return 'movie already created'
     
         const movieData = {
             title,
             director,
             quantity
         }
+
+        if(!title || !director || !quantity) return 'all fields are required'
+
         const createNewMovie = movieRepository.create(movieData)
         await movieRepository.save(createNewMovie)
 
@@ -33,6 +39,8 @@ export default {
         return getMovies
     },
     async filterByMovieTitle(title: MovieInputDTO) {
+        if(!title) return 'movie title not provided'
+
         const movieRepository = getRepository(Movie)
 
         const findMovieByTitle = await movieRepository
@@ -52,6 +60,8 @@ export default {
         .select('quantity')
         .where('movie.id = :id', {id})
         .getRawOne()
+
+        if(getMovieId === undefined) return 'movie not found' 
 
         let movieAvailability = getMovieId.quantity
         
@@ -76,6 +86,8 @@ export default {
         .select('quantity')
         .where('movie.id = :id', {id})
         .getRawOne()
+
+        if(getMovieId === undefined) return 'movie not found'
 
         let movieAvailability = getMovieId.quantity
         ++movieAvailability

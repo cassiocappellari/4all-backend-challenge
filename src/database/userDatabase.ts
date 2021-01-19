@@ -11,15 +11,18 @@ interface UserInputDTO {
 export default {
     async UserSignUp({name, email, password}: UserInputDTO) {
         const userRepository = getRepository(User)
+        const user = await userRepository.findOne({email})
 
-        const checkDuplicatedUser = await userRepository.findOne({email})
-        if(checkDuplicatedUser) return 'user already exists'
+        if(user) return 'user already exists'
 
         const userData = {
             name,
             email,
             password
         }
+
+        if(!name || !email || !password) return 'all fields are required'
+        if(password.length < 6) return 'password must have at least six characters'
 
         const signupUser = userRepository.create(userData)
         await userRepository.save(signupUser)

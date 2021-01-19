@@ -21,6 +21,58 @@
 - Locação de filmes
 - Devolução de filmes
 
+## 🗄️ Databases
+
+- **Redis**
+
+Responsável por controle e armazenamento de tokens gerados para usuários cadastrados.
+
+```bash
+# Atualize seu cache de pacotes do Linux
+
+$ sudo apt update
+
+# Instale o Redis
+
+$ sudo apt install redis
+
+# Instale o Redis-Server
+
+$ sudo apt install redis-server
+```
+
+- **MySQL**
+
+Responsável por armezanar dados da aplicação referentes às informações de usuários e filmes.
+
+Script do banco de dados
+
+```
+CREATE DATABASE 4all-backend-challenge;
+```
+
+Script da tabela de usuários
+
+```
+CREATE TABLE users (
+  id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL
+);
+```
+
+Script da tabela de filmes
+
+```
+CREATE TABLE movies (
+  id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  title VARCHAR(255) NOT NULL,
+  director VARCHAR(255) NOT NULL,
+  quantity INTEGER NOT NULL
+);
+```
+
 ## ⚙ How to Run
 
 ```bash
@@ -40,52 +92,6 @@ $ npm install
 
 $ npm start
 
-```
-
-## 🗄️ Databases
-
-- **Redis**
-
-Responsável por armazenar os tokens gerados para usuários cadastrados.
-
-```bash
-# Atualize seu cache de pacotes do Linux
-
-$ sudo apt update
-
-# Instale o Redis
-
-$ sudo apt install redis
-
-# Instale o Redis-Server
-
-$ sudo apt install redis-server
-```
-
-- **MySQL**
-
-Responsável por armezanar os dados da aplicação referentes às informações de usuários e filmes.
-
-Scripts da tabela de usuários
-
-```
-CREATE TABLE users (
-  id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(255) NOT NULL,
-  email VARCHAR(255) NOT NULL UNIQUE,
-  password VARCHAR(255) NOT NULL
-);
-```
-
-Scripts da tabela de filmes
-
-```
-CREATE TABLE movies (
-  id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  title VARCHAR(255) NOT NULL,
-  director VARCHAR(255) NOT NULL,
-  quantity INTEGER NOT NULL
-);
 ```
 
 Após clonar o projeto, rodar os comandos e instalar as dependências junto com os bancos de dados, é possível testar o sistema localmente através do aplicativo [Insomnia](https://insomnia.rest/). Basta clicar no botão abaixo:

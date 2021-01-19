@@ -26,7 +26,7 @@ export default {
             const authHeader = req.headers.authorization as string
             const token = authHeader.replace('Bearer', '').trim()
 
-            if(!token) return res.status(401).send({message: 'token not provided'})
+            if(!token) return res.status(404).send({message: 'token not provided'})
         
             const data = await jwtr.verify(token, String(process.env.JWT_KEY))
             const {id} = data as TokenPayloadDTO
@@ -34,7 +34,7 @@ export default {
 
             return next()
         } catch(error) {
-            return res.status(401).send({message: 'invalid token'})
+            return res.status(403).send({message: 'invalid token'})
         }
     },
     async userAuthenticate({email, password}: UserAuthenticationDTO) {
