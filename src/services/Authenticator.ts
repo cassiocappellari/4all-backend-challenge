@@ -41,7 +41,9 @@ export default {
         const userRepository = getRepository(User)
 
         const user = await userRepository.findOne({email})
+
         if(!user) return 'user not found'
+        if(!email || !password) return 'all fields are required'
 
         const isValidPassword = await bcrypt.compare(password, user.password)
         if(!isValidPassword) return 'invalid password'

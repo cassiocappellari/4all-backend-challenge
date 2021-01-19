@@ -23,7 +23,8 @@ export default {
             const userAuthenticationStatus = await Authenticator.userAuthenticate(req.body)
 
             if(userAuthenticationStatus === 'user not found') return res.status(404).send({userAuthenticationStatus})
-            if(userAuthenticationStatus === 'invalid password') return res.status(401).send({userAuthenticationStatus})
+            if(userAuthenticationStatus === 'all fields are required') return res.status(400).send({userAuthenticationStatus})
+            if(userAuthenticationStatus === 'invalid password') return res.status(403).send({userAuthenticationStatus})
 
             const token = await Authenticator.tokenGenerate(req.body)
 

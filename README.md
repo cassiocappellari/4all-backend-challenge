@@ -41,6 +41,8 @@ $ sudo apt install redis
 $ sudo apt install redis-server
 ```
 
+Para rodar o Redis em ambiente Windows faça o download do arquivo `Redis-x64-3.0.504.zip` [nesse repositório](https://github.com/microsoftarchive/redis/releases).
+
 - **MySQL**
 
 Responsável por armezanar dados da aplicação referentes às informações de usuários e filmes.
@@ -94,7 +96,7 @@ $ npm start
 
 ```
 
-Após clonar o projeto, rodar os comandos e instalar as dependências junto com os bancos de dados, é possível testar o sistema localmente através do aplicativo [Insomnia](https://insomnia.rest/). Basta clicar no botão abaixo:
+Basta clicar no botão abaixo para testar localmente as rotas do sistema através do aplicativo [Insomnia](https://insomnia.rest/):
 
 [![Run in Insomnia}](https://insomnia.rest/images/run.svg)](https://insomnia.rest/run/?label=4all-backend-challenge&uri=https%3A%2F%2Fraw.githubusercontent.com%2Fcassiocappellari%2F4all-backend-challenge%2Fmaster%2FInsomnia_2021-01-17)
 
@@ -197,7 +199,7 @@ Saída:
 
 - **GET:** `/movie/available`
 
-A rota de listar filmes disponíveis não apresenta aqueles cuja quantidade é igual a 0.
+A rota de listar filmes disponíveis não apresenta aqueles cujo campo `quantity` é igual a 0.
 
 Saída:
 ```json
