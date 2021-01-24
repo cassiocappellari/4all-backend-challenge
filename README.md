@@ -50,7 +50,7 @@ Responsável por armezanar dados da aplicação referentes às informações de 
 Script do banco de dados
 
 ```
-CREATE DATABASE 4all-backend-challenge;
+CREATE DATABASE `4all-backend-challenge`;
 ```
 
 Script da tabela de usuários

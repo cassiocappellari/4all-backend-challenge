@@ -1,8 +1,9 @@
-import {Router} from 'express'
+import express from 'express'
 import authMiddleware from '../services/Authenticator'
 import UserController from '../controllers/UserController'
 
-const routes = Router()
+const routes = express()
+routes.use(express.json())
 
 routes.post('/user/signup', UserController.signup)
 routes.post('/user/logon', UserController.logon)
