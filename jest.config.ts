@@ -1,4 +1,6 @@
 export default {
+
+  testTimeout: 30000,
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -88,7 +90,7 @@ export default {
   // notifyMode: "failure-change",
 
   // A preset that is used as a base for Jest's configuration
-  // preset: undefined,
+  preset: 'ts-jest',
 
   // Run tests from one or more projects
   // projects: undefined,
