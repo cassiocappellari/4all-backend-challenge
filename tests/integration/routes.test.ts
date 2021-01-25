@@ -3,7 +3,7 @@ import userRoutes from '../../src/routes/userRoutes'
 import movieRoutes from '../../src/routes/movieRoutes'
 import {connection} from '../../src/database/connection'
 
-describe('User Routes', () => {
+describe('Authentication', () => {
     beforeAll(async () => {
         await connection()
     })
