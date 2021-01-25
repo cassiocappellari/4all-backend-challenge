@@ -1,6 +1,6 @@
 export default {
 
-  testTimeout: 30000,
+  testTimeout: 100000,
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
