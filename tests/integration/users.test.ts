@@ -11,8 +11,8 @@ describe('', () => {
         const response = await request(userRoutes)
         .post('/user/signup')
         .send({
-            name: 'Cássio Teste 3',
-            email: 'cassiocappellariteste3@gmail.com',
+            name: 'User Integration Test',
+            email: 'userintegrationtest@gmail.com',
             password: '123456'
         })
 
