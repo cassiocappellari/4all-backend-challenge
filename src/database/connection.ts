@@ -1,29 +1,8 @@
-import {createConnection, getConnection} from "typeorm"
+import {createConnection, getConnectionOptions} from "typeorm"
 
-const connection = {
-    async create() {
-        await createConnection()
-        .then(() => console.log(
-            'Successfully connected with database'
-            )
-        )
-    },
-    async close() {
-        await getConnection().close()
-    },
-    async clear() {
-        const connection = getConnection()
-        const entities = connection.entityMetadatas
+export const connection = async () => {
+    const connectionOptions = await getConnectionOptions(process.env.NODE_ENV)
 
-        const entityDeletionPromises = entities.map((entity) => async () => {
-            const repository = connection.getRepository(entity.name)
-            await repository.query(`DELETE FROM ${entity.tableName}`)
-        })
-
-        await Promise.all(entityDeletionPromises)
-    }
+    return createConnection({...connectionOptions, name: 'default'})
+    .then(() => console.log('Successfully connected with database'))
 }
-
-connection.create()
-
-export default connection

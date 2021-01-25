@@ -1,0 +1,27 @@
+[
+    {
+    "name": "default",
+    "type": "mysql",
+    "host": "localhost",
+    "port": 3306,
+    "username": "root",
+    "password": "mysql",
+    "database": "4all-backend-challenge",
+    "synchronize": true,
+    "logging": false,
+    "entities": ["./src/models/*.ts"]
+    }, 
+    {
+    "name": "test",
+    "type": "mysql",
+    "host": "localhost",
+    "port": 3306,
+    "username": "root",
+    "password": "mysql",
+    "database": "tests-4all-backend-challenge",
+    "synchronize": true,
+    "logging": false,
+    "dropSchema": true,
+    "entities": ["./src/models/*.ts"]
+    }
+]
