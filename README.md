@@ -10,6 +10,7 @@
 - [Express](https://expressjs.com/pt-br/guide/routing.html)
 - [JWT-Redis](https://www.npmjs.com/package/jwt-redis)
 - [Bcrypt](https://www.npmjs.com/package/bcrypt)
+- [Jest](https://jestjs.io/docs/en/getting-started.html)
 
 ## 🚀 Features
 
@@ -290,6 +291,16 @@ Saída:
   "returnMovieStatus": "movie returned successfuly"
 }
 ```
+
+## 🔬 Running Tests
+
+```
+$ npm test
+```
+
+**Coverage Reports**
+
+Os coverage reports são criados automaticamente após a execução dos testes, sendo possível vê-los dentro da pasta `tests/coverage`.
 
 ## 👨‍🚀 Author
 
