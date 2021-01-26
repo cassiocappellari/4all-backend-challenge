@@ -3,8 +3,8 @@ import {getRepository} from 'typeorm'
 import User from '../models/User'
 import bcrypt from 'bcryptjs'
 import redis from 'redis'
-import JWTR from 'jwt-redis'
 const redisClient = redis.createClient()
+import JWTR from 'jwt-redis'
 const jwtr = new JWTR(redisClient)
 
 interface UserAuthenticationDTO {

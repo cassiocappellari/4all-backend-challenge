@@ -1,13 +1,17 @@
 import request from 'supertest'
 import User from '../../src/models/User'
 import userRoutes from '../../src/routes/userRoutes'
-import {connection} from '../../src/database/connection'
+import connection from '../../src/database/connection'
 import {getRepository} from 'typeorm'
 import bcrypt from 'bcryptjs'
 
 describe('User', () => {
     beforeAll(async () => {
-        await connection()
+        await connection.create()
+    })
+
+    afterAll(async () => {
+        await connection.close()
     })
 
     it('should encrypt user password', async () => {

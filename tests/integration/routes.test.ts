@@ -1,11 +1,15 @@
 import request from 'supertest'
 import userRoutes from '../../src/routes/userRoutes'
 import movieRoutes from '../../src/routes/movieRoutes'
-import {connection} from '../../src/database/connection'
+import connection from '../../src/database/connection'
 
 describe('Authentication', () => {
     beforeAll(async () => {
-        await connection()
+        await connection.create()
+    })
+
+    afterAll(async () => {
+        await connection.close()
     })
 
     it('should create a new user with name, email and password', async () => {
