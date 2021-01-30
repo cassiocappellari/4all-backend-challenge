@@ -9,9 +9,9 @@
     "database": "4all-backend-challenge",
     "synchronize": true,
     "logging": false,
-    "entities": ["./src/models/*.ts"],
-    "migrations": ["./src/database/migrations/*.ts"],
-    "cli": {"migrationsDir": "./src/database/migrations/"}
+    "entities": ["src/models/*.ts"],
+    "migrations": ["src/database/migrations/*.ts"],
+    "cli": {"migrationsDir": "src/database/migrations/"}
     }, 
     {
     "name": "test",
@@ -24,8 +24,8 @@
     "synchronize": true,
     "logging": false,
     "dropSchema": true,
-    "entities": ["./src/models/*.ts"],
-    "migrations": ["./src/database/migrations/*.ts"],
-    "cli": {"migrationsDir": "./src/database/migrations/"}
+    "entities": ["src/models/*.ts"],
+    "migrations": ["src/database/migrations/*.ts"],
+    "cli": {"migrationsDir": "src/database/migrations/"}
     }
 ]

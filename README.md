@@ -48,13 +48,19 @@ Para rodar o Redis em ambiente Windows faça o download do arquivo `Redis-x64-3.
 
 Responsável por armezanar dados da aplicação referentes às informações de usuários e filmes.
 
-Script do banco de dados
+Script do banco de dados para ambiente de desenvolvimento:
 
 ```
 CREATE DATABASE `4all-backend-challenge`;
 ```
 
-Script da tabela de usuários
+Script do banco de dados para ambiente de testes:
+
+```
+CREATE DATABASE `tests-4all-backend-challenge`;
+```
+
+Script da tabela de usuários:
 
 ```
 CREATE TABLE users (
@@ -65,7 +71,7 @@ CREATE TABLE users (
 );
 ```
 
-Script da tabela de filmes
+Script da tabela de filmes:
 
 ```
 CREATE TABLE movies (
@@ -94,12 +100,25 @@ $ npm install
 # Inicie o projeto
 
 $ npm start
-
 ```
 
 Basta clicar no botão abaixo para testar localmente as rotas do sistema através do aplicativo [Insomnia](https://insomnia.rest/):
 
 [![Run in Insomnia}](https://insomnia.rest/images/run.svg)](https://insomnia.rest/run/?label=4all-backend-challenge&uri=https%3A%2F%2Fraw.githubusercontent.com%2Fcassiocappellari%2F4all-backend-challenge%2Fmaster%2FInsomnia_2021-01-17)
+
+**Migrations**
+
+É possível rodar os scripts das tabelas do banco de dados através das migrations.
+
+Comando para ambiente de desenvolvimento:
+```
+$ npm run typeorm migration:run
+```
+
+Comando para ambiente de testes:
+```
+$ npx ts-node-dev ./node_modules/typeorm/cli.js migration:run -c test
+```
 
 ## 🗺️ App Routes
 
