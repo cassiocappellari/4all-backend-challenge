@@ -52,21 +52,22 @@ export default {
 
         return findMovieByTitle
     },
-    async rentMovie(id: MovieInputDTO) {
+    async rentMovie(id: MovieInputDTO, userId: Number) {
         const movieRepository = getRepository(Movie)
-            
+
         const getMovieId = await movieRepository
         .createQueryBuilder('movie')
         .select('quantity')
         .where('movie.id = :id', {id})
         .getRawOne()
-
         if(getMovieId === undefined) return 'movie not found' 
 
-        let movieAvailability = getMovieId.quantity
-        
-        if(movieAvailability === 0) return 'movie not available'
+        const findMovieById = await movieRepository.findOne(Number(id), {relations: ['users']})
+        const findUserById = findMovieById?.users.find((user) => user.id === userId)
+        if(findUserById !== undefined) return 'movie already rented'
 
+        let movieAvailability = getMovieId.quantity
+        if(movieAvailability === 0) return 'movie not available'
         --movieAvailability
 
         await getConnection()
@@ -76,9 +77,15 @@ export default {
         .where('id = :id', {id})
         .execute()
 
+        await getConnection()
+        .createQueryBuilder()
+        .relation(Movie, 'users')
+        .of(Number(id))
+        .add(userId)
+
         return 'movie rented successfuly'
     },
-    async returnMovie(id: MovieInputDTO) {
+    async returnMovie(id: MovieInputDTO, userId: Number) {
         const movieRepository = getRepository(Movie)
             
         const getMovieId = await movieRepository
@@ -86,18 +93,27 @@ export default {
         .select('quantity')
         .where('movie.id = :id', {id})
         .getRawOne()
-
         if(getMovieId === undefined) return 'movie not found'
+
+        const findMovieById = await movieRepository.findOne(Number(id), {relations: ['users']})
+        const findUserById = findMovieById?.users.find((user) => user.id === userId)
+        if(findUserById === undefined) return 'movie already returned'
 
         let movieAvailability = getMovieId.quantity
         ++movieAvailability
-
+        
         await getConnection()
         .createQueryBuilder()
         .update(Movie)
         .set({quantity: movieAvailability})
         .where('id = :id', {id})
         .execute()
+
+        await getConnection()
+        .createQueryBuilder()
+        .relation(Movie, 'users')
+        .of(Number(id))
+        .remove(userId)
 
         return 'movie returned successfuly'
     }

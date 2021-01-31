@@ -11,6 +11,7 @@
 - [JWT-Redis](https://www.npmjs.com/package/jwt-redis)
 - [Bcrypt](https://www.npmjs.com/package/bcrypt)
 - [Jest](https://jestjs.io/docs/en/getting-started.html)
+- [SuperTest](https://www.npmjs.com/package/supertest)
 
 ## 🚀 Features
 

@@ -1,7 +1,8 @@
-import {Entity, Column, PrimaryGeneratedColumn} from 'typeorm'
+import {Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable} from 'typeorm'
+import User from './User'
 
 @Entity('movies')
-export default class User {
+export default class Movie {
     @PrimaryGeneratedColumn('increment')
     id: number
 
@@ -13,4 +14,8 @@ export default class User {
 
     @Column()
     quantity: number
+
+    @ManyToMany(() => User)
+    @JoinTable({name: 'movies_users'})
+    users: User[]
 }

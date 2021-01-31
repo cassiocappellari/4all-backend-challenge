@@ -37,9 +37,10 @@ export default {
     },
     async rentMovie(req: Request, res: Response) {
         try {
-            const rentMovieStatus = await movieDatabase.rentMovie(req.params.id as any)
+            const rentMovieStatus = await movieDatabase.rentMovie(req.params.id as any, req.userId as any)
 
             if(rentMovieStatus === 'movie not found') return res.status(404).send({rentMovieStatus})
+            if(rentMovieStatus === 'movie already rented') return res.status(400).send({rentMovieStatus})
             if(rentMovieStatus === 'movie not available') return res.status(404).send({rentMovieStatus})
 
             return res.status(200).send({rentMovieStatus})
@@ -49,9 +50,10 @@ export default {
     },
     async returnMovie(req: Request, res: Response) {
         try {
-            const returnMovieStatus = await movieDatabase.returnMovie(req.params.id as any)
+            const returnMovieStatus = await movieDatabase.returnMovie(req.params.id as any, req.userId as any)
 
             if(returnMovieStatus === 'movie not found') return res.status(404).send({returnMovieStatus})
+            if(returnMovieStatus === 'movie already returned') return res.status(400).send({returnMovieStatus})
 
             return res.status(200).send({returnMovieStatus})
         } catch(error) {
